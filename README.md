@@ -61,6 +61,9 @@ Un eseguibile nativo **non richiede Python**, ma è legato al suo OS: ne serve u
 per Linux, uno per macOS e uno per Windows. Non è possibile produrli tutti da una
 sola macchina, quindi conviene farli generare dalla CI.
 
+- **Binari pronti:** già compilati nella pagina
+  [Releases](https://github.com/etamponi/salva/releases) — `salva-linux-x86_64`,
+  `salva-macos-arm64`, `salva-windows-x86_64.exe`.
 - **Automatico (consigliato):** il workflow `.github/workflows/build.yml` compila
   i tre binari in parallelo su GitHub Actions (PyInstaller, `--onefile`). Avvialo
   a mano dalla tab *Actions*, oppure pusha un tag `v*` per allegarli a una release.
