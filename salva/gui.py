@@ -11,6 +11,7 @@ Avvio:
 from __future__ import annotations
 
 import json
+import os
 import queue
 import sys
 import threading
@@ -375,16 +376,29 @@ class SalvaApp:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # SALVA_GUI_SELFTEST: apre la finestra, esegue un audit e si chiude da sola.
+    # Serve allo smoke test headless (Xvfb) del binario, anche in CI.
+    selftest = bool(os.environ.get("SALVA_GUI_SELFTEST"))
+
     root = tk.Tk()
     root.title(f"salva {__version__} — sicurezza infrastrutture")
     try:
         root.tk.call("tk", "scaling", 1.2)
     except tk.TclError:
         pass
-    SalvaApp(root)
+    app = SalvaApp(root)
     root.geometry("960x660")
     root.minsize(780, 540)
+
+    if selftest:
+        def _run_and_close():
+            app.run_all_sync()
+            root.after(500, root.destroy)
+        root.after(300, _run_and_close)
+
     root.mainloop()
+    if selftest:
+        print("salva GUI selftest OK")
     return 0
 
 

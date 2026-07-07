@@ -64,6 +64,15 @@ jobs:
             mv dist/salva-gui "out/${{ matrix.gui }}"
           fi
 
+      - name: Smoke test del binario (Linux, headless)
+        # Verifica che i binari nativi si AVVIINO davvero: la CLI risponde e la
+        # GUI apre la finestra Tk sotto Xvfb, esegue un audit e si chiude.
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb
+          "out/${{ matrix.artifact }}" --version
+          SALVA_GUI_SELFTEST=1 xvfb-run -a "out/${{ matrix.gui }}"
+
       - name: Carica gli artefatti
         uses: actions/upload-artifact@v4
         with:
