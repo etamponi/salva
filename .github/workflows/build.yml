@@ -18,10 +18,13 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact: salva-linux-x86_64
+            gui: salva-gui-linux-x86_64
           - os: macos-latest
             artifact: salva-macos-arm64
+            gui: salva-gui-macos-arm64
           - os: windows-latest
             artifact: salva-windows-x86_64
+            gui: salva-gui-windows-x86_64
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -33,22 +36,35 @@ jobs:
       - name: Installa PyInstaller
         run: python -m pip install --upgrade pyinstaller
 
-      - name: Compila il binario
+      - name: Compila la CLI
         run: pyinstaller --onefile --name salva --paths . salva_main.py
 
+      - name: Compila la GUI
+        # Su Windows serve --windowed per non aprire una console accanto alla
+        # finestra; su Linux/macOS l'app grafica parte senza console.
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            pyinstaller --onefile --windowed --name salva-gui --paths . salva_gui_main.py
+          else
+            pyinstaller --onefile --name salva-gui --paths . salva_gui_main.py
+          fi
+
       - name: Rinomina con un nome unico per piattaforma
-        # Necessario: Linux e macOS producono entrambi "salva"; senza un nome
-        # distinto i due file collidono come asset della release.
+        # Necessario: Linux e macOS producono entrambi "salva"/"salva-gui";
+        # senza un nome distinto i file collidono come asset della release.
         shell: bash
         run: |
           mkdir -p out
           if [ "${{ runner.os }}" = "Windows" ]; then
-            mv dist/salva.exe "out/${{ matrix.artifact }}.exe"
+            mv dist/salva.exe     "out/${{ matrix.artifact }}.exe"
+            mv dist/salva-gui.exe "out/${{ matrix.gui }}.exe"
           else
-            mv dist/salva "out/${{ matrix.artifact }}"
+            mv dist/salva     "out/${{ matrix.artifact }}"
+            mv dist/salva-gui "out/${{ matrix.gui }}"
           fi
 
-      - name: Carica l'artefatto
+      - name: Carica gli artefatti
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}

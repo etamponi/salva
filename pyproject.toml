@@ -15,5 +15,8 @@ keywords = ["security", "hardening", "sysadmin", "audit", "linux"]
 [project.scripts]
 salva = "salva.cli:main"
 
+[project.gui-scripts]
+salva-gui = "salva.gui:main"
+
 [tool.setuptools]
 packages = ["salva", "salva.checks"]

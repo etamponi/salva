@@ -7,6 +7,12 @@ gravità e rimedio concreto.
 Zero dipendenze: solo la libreria standard di Python (≥ 3.9). `salva` **non
 modifica nulla** — legge la configurazione e ti dice cosa e come correggere.
 
+Due interfacce sullo stesso motore: **riga di comando** (`salva check`) e
+**interfaccia grafica** (`salva gui`, basata su Tkinter — anch'essa senza
+dipendenze esterne).
+
+![La GUI di salva: scheda Audit](docs/screenshot-audit.png)
+
 ## Uso rapido
 
 ```bash
@@ -16,6 +22,7 @@ python3 -m salva advice     # tutti i consigli, per area
 python3 -m salva advice rete
 python3 -m salva check      # audit read-only di questa macchina
 sudo python3 -m salva check # audit completo (accede a shadow, firewall, ...)
+python3 -m salva gui        # interfaccia grafica (richiede Tk: apt install python3-tk)
 ```
 
 Oppure con il wrapper eseguibile:
@@ -62,8 +69,10 @@ per Linux, uno per macOS e uno per Windows. Non è possibile produrli tutti da u
 sola macchina, quindi conviene farli generare dalla CI.
 
 - **Binari pronti:** già compilati nella pagina
-  [Releases](https://github.com/etamponi/salva/releases) — `salva-linux-x86_64`,
-  `salva-macos-arm64`, `salva-windows-x86_64.exe`.
+  [Releases](https://github.com/etamponi/salva/releases). Per ogni sistema c'è
+  la versione a riga di comando e quella grafica:
+  - CLI: `salva-linux-x86_64`, `salva-macos-arm64`, `salva-windows-x86_64.exe`
+  - GUI: `salva-gui-linux-x86_64`, `salva-gui-macos-arm64`, `salva-gui-windows-x86_64.exe`
 - **Automatico (consigliato):** il workflow `.github/workflows/build.yml` compila
   i tre binari in parallelo su GitHub Actions (PyInstaller, `--onefile`). Avvialo
   a mano dalla tab *Actions*, oppure pusha un tag `v*` per allegarli a una release.
@@ -94,6 +103,7 @@ sola macchina, quindi conviene farli generare dalla CI.
 | `salva check` | esegue tutti i controlli e stampa un report con riepilogo |
 | `salva check --only ssh,firewall` | esegue solo i controlli scelti |
 | `salva check --json` | output machine-readable (per cron/CI/dashboard) |
+| `salva gui` | apre l'interfaccia grafica (audit + consigli in finestra) |
 | `salva list-checks` | elenca i controlli disponibili |
 
 ## Controlli (tutti read-only)

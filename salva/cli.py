@@ -175,7 +175,22 @@ def build_parser() -> argparse.ArgumentParser:
     pl = sub.add_parser("list-checks", help="elenca i controlli disponibili")
     pl.set_defaults(func=_list_checks)
 
+    pg = sub.add_parser("gui", help="apre l'interfaccia grafica")
+    pg.set_defaults(func=_gui)
+
     return p
+
+
+def _gui(_args) -> int:
+    # import ritardato: tkinter serve solo alla GUI, non alla CLI.
+    try:
+        from .gui import main as gui_main
+    except Exception as exc:  # es. Tk non disponibile
+        print(ui.c(f"Impossibile avviare la GUI: {exc}", "red"), file=sys.stderr)
+        print("Su Linux potrebbe mancare il pacchetto Tk: prova "
+              "'sudo apt install python3-tk'.", file=sys.stderr)
+        return 1
+    return gui_main([])
 
 
 def _default(_args) -> int:
