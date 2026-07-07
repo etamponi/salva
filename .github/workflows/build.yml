@@ -18,13 +18,10 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact: salva-linux-x86_64
-            binary: salva
           - os: macos-latest
             artifact: salva-macos-arm64
-            binary: salva
           - os: windows-latest
             artifact: salva-windows-x86_64
-            binary: salva.exe
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -39,11 +36,23 @@ jobs:
       - name: Compila il binario
         run: pyinstaller --onefile --name salva --paths . salva_main.py
 
+      - name: Rinomina con un nome unico per piattaforma
+        # Necessario: Linux e macOS producono entrambi "salva"; senza un nome
+        # distinto i due file collidono come asset della release.
+        shell: bash
+        run: |
+          mkdir -p out
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            mv dist/salva.exe "out/${{ matrix.artifact }}.exe"
+          else
+            mv dist/salva "out/${{ matrix.artifact }}"
+          fi
+
       - name: Carica l'artefatto
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}
-          path: dist/${{ matrix.binary }}
+          path: out/*
 
   release:
     # Allega i binari alla release quando si pusha un tag v*
