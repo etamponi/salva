@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "salva"
+version = "0.1.0"
+description = "Assistente per la messa in sicurezza di infrastrutture Linux: consigli + audit read-only."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Emanuele" }]
+keywords = ["security", "hardening", "sysadmin", "audit", "linux"]
+
+[project.scripts]
+salva = "salva.cli:main"
+
+[tool.setuptools]
+packages = ["salva", "salva.checks"]
